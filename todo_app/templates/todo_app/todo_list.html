@@ -1,0 +1,104 @@
+<!-- todo_app/templates/todo_app/todo_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo List</title>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        li a {
+            text-decoration: none;
+            color: #007bff;
+            margin-left: 10px;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            display: inline;
+            margin-left: 10px;
+        }
+
+        form button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #c82333;
+        }
+
+        .add-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .add-form input[type="text"] {
+            padding: 5px;
+        }
+
+        .add-form button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .add-form button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo List</h1>
+    <div class="add-form">
+        <a href="/test_view"><button type="submit" href="{% url 'test_view' %}">Add Task</button></a>
+        <!-- <form action="{% url 'add_task' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Title" required>
+            <button type="submit" href="{% url 'add_task' %}">Add Task</button>
+
+        </form> -->
+    </div>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.title }} - {{ task.description }} {% if task.completed %}(Completed){% endif %}
+                <a href="{% url 'edit_task' task.id %}">Edit</a>
+                <form action="{% url 'delete_task' task.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

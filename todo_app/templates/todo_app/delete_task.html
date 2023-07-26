@@ -1,0 +1,16 @@
+<!-- todo_app/templates/todo_app/delete_task.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Task</title>
+</head>
+<body>
+    <h1>Delete Task</h1>
+    <p>Are you sure you want to delete "{{ task.title }}"?</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+    <a href="{% url 'todo_list' %}">Back to Todo List</a>
+</body>
+</html>
