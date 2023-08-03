@@ -52,7 +52,7 @@
         }
 
         form button:hover {
-            background-color: #c82333;
+            background-color: #e80a20;
         }
 
         .add-form {
@@ -75,18 +75,29 @@
         .add-form button:hover {
             background-color: #218838;
         }
+        h2{
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
+    <div class="profile">
+        <h2 class="profile__title">Welcome, <span id="username" class="profile__username"></span></h2>
+        <p id="greeting" class="profile__greeting"></p>
+        <a href="{% url 'logout' %}" class="profile__logout-link">Logout</a>
+    </div>
+    <div class="login-button">
+        <a href="/login"><button type="submit" href="{% url 'login' %}">Login</button></a>
+    </div>
     <h1>Todo List</h1>
     <div class="add-form">
-        <a href="/test_view"><button type="submit" href="{% url 'test_view' %}">Add Task</button></a>
-        <!-- <form action="{% url 'add_task' %}" method="POST">
+        <a href="/add_task"><button type="submit" href="{% url 'add_task' %}">Add Task</button></a>
+        <form action="{% url 'add_task' %}" method="POST">
             {% csrf_token %}
-            <input type="text" name="title" placeholder="Title" required>
-            <button type="submit" href="{% url 'add_task' %}">Add Task</button>
+            <!-- <input type="text" name="title" placeholder="Title" required>
+            <button type="submit" href="{% url 'add_task' %}">Add Task</button> -->
 
-        </form> -->
+        </form>
     </div>
     <ul>
         {% for task in tasks %}
@@ -100,5 +111,52 @@
             </li>
         {% endfor %}
     </ul>
+    <script>
+        const usernameElement = document.getElementById('username');
+    const greetingElement = document.getElementById('greeting');
+    const username = '{{ request.user.username }}';
+    const greetings = [
+      'How was your day?',
+      'Welcome to our platform!',
+      'Enjoy your stay!',
+    ];
+    const delay = 100;
+    const repeatCount = 2;
+    
+    function typeWriter(element, text, delay) {
+      let charIndex = 0;
+      const typingInterval = setInterval(() => {
+        if (charIndex < text.length) {
+          element.innerHTML += text.charAt(charIndex);
+          charIndex++;
+        } else {
+          clearInterval(typingInterval);
+        }
+      }, delay);
+    }
+    
+    function repeatTyping(element, lines, delay, repeatCount) {
+      let repeatIndex = 0;
+      const repeatInterval = setInterval(() => {
+        if (repeatIndex < repeatCount) {
+          lines.forEach((line) => {
+            setTimeout(() => {
+              element.innerHTML = '';
+              typeWriter(element, line, delay);
+            }, repeatIndex * lines.length * delay * line.length);
+          });
+          repeatIndex++;
+        } else {
+          clearInterval(repeatInterval);
+        }
+      }, repeatCount * lines.length * delay * line.length);
+    }
+    
+    typeWriter(usernameElement, username, delay);
+    setTimeout(() => {
+      repeatTyping(greetingElement, greetings, delay, repeatCount);
+    }, 1500);
+    
+    </script>   
 </body>
 </html>
