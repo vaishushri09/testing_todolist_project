@@ -34,4 +34,6 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('all/', views.all_user_tasks, name='all_user_tasks'),
     path('register/', views.register, name='register'),
+    path('mark_task_completed/<int:task_id>/', views.mark_task_completed, name='mark_task_completed'),
+    path('sleep/', views.sleep_recommendation, name='sleep_recommendation'),
 ]

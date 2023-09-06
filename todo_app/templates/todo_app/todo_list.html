@@ -4,114 +4,86 @@
 <head>
     <title>Todo List</title>
     {% load static %}
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        li a {
-            text-decoration: none;
-            color: #007bff;
-            margin-left: 10px;
-        }
-
-        li a:hover {
-            text-decoration: underline;
-        }
-
-        form {
-            display: inline;
-            margin-left: 10px;
-        }
-
-        form button {
-            background-color: #dc3545;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        form button:hover {
-            background-color: #e80a20;
-        }
-
-        .add-form {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .add-form input[type="text"] {
-            padding: 5px;
-        }
-
-        .add-form button {
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        .add-form button:hover {
-            background-color: #218838;
-        }
-        h2{
-            color: #dc3545;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="profile">
-        <h2 class="profile__title">Welcome, <span id="username" class="profile__username"></span></h2>
-        <p id="greeting" class="profile__greeting"></p>
-        <a href="{% url 'logout' %}" class="profile__logout-link">Logout</a>
-    </div>
-    <div class="login-button">
-        <a href="/login"><button type="submit" href="{% url 'login' %}">Login</button></a>
-    </div>
-    <h1>Todo List</h1>
-    <div class="add-form">
-        <a href="/add_task"><button type="submit" href="{% url 'add_task' %}">Add Task</button></a>
-        <form action="{% url 'add_task' %}" method="POST">
-            {% csrf_token %}
-            <!-- <input type="text" name="title" placeholder="Title" required>
-            <button type="submit" href="{% url 'add_task' %}">Add Task</button> -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Todo App</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-        </form>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Task List -->
+                <h1>Todo List</h1>
+                <ul class="list-group">
+                    {% for task in tasks %}
+                    <li class="list-group-item">
+                        {{ task.title }} - {{ task.description }} {% if task.completed %}(Completed){% endif %}
+                        {% if task.time_of_completion %}
+                        <br>
+                        <small class="text-muted">Time of Completion: {{ task.time_of_completion }}</small>
+                        {% endif %}
+                        {% if not task.completed %}
+                        <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-info">Edit</a>
+                        <form action="{% url 'delete_task' task.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                        {% endif %}
+                        <form action="{% url 'mark_task_completed' task.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            {% if task.completed %}
+                            <button type="submit" class="btn btn-sm btn-warning">Mark Incomplete</button>
+                            {% else %}
+                            <button type="submit" class="btn btn-sm btn-success">Mark Complete</button>
+                            {% endif %}
+                        </form>
+                        {% if task.time_of_completion and not task.completed %}
+                        <br>
+                        <small class="text-muted">Time Remaining: {{ task.time_of_completion|timeuntil }}</small>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <!-- User Profile and Greeting -->
+                <div class="profile">
+                    <h2 class="profile__title">Welcome, 
+                      <span id="username" class="profile__username"></span>
+                    </h2>
+                    <p id="greeting" class="profile__greeting"></p>
+                    <a href="{% url 'logout' %}" class="profile__logout-link">Logout</a>
+                </div>
+                <!-- Add Task Form -->
+                <div class="add-form mt-3">
+                    <a href="/add_task"><button class="btn btn-primary" type="submit" href="{% url 'add_task' %}">Add Task</button></a>
+                    <form action="{% url 'add_task' %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <!-- <input type="text" name="title" placeholder="Title" required>
+                        <button type="submit" href="{% url 'add_task' %}">Add Task</button> -->
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <ul>
-        {% for task in tasks %}
-            <li>
-                {{ task.title }} - {{ task.description }} {% if task.completed %}(Completed){% endif %}
-                <a href="{% url 'edit_task' task.id %}">Edit</a>
-                <form action="{% url 'delete_task' task.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- JavaScript code here (profile greeting) -->
     <script>
+        // JavaScript code here (profile greeting)
         const usernameElement = document.getElementById('username');
     const greetingElement = document.getElementById('greeting');
     const username = '{{ request.user.username }}';
@@ -156,7 +128,7 @@
     setTimeout(() => {
       repeatTyping(greetingElement, greetings, delay, repeatCount);
     }, 1500);
+    </script>
     
-    </script>   
 </body>
 </html>
